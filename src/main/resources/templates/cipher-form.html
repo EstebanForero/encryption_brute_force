@@ -40,10 +40,26 @@
         <textarea name="text" rows="5" class="w-full p-3 border rounded-lg"
           placeholder="Enter your text here..."></textarea>
       </div>
-      <div id="form-content" class="space-y-4"></div>
+      <div id="form-content" class="space-y-4" hx-get="/update-form?cipher=Caesar&operation=Encrypt" hx-trigger="load">
+        <!-- Initial form content will be loaded here -->
+      </div>
       <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Process</button>
     </form>
   </div>
+
+  <script>
+    document.addEventListener('htmx:afterSwap', function (evt) {
+      if (evt.target.id === 'form-content') {
+        const breakOptionsDiv = document.getElementById('break-options');
+        const vigenereRadio = document.querySelector('input[name="breakMethod"][value="rockyou"]');
+        if (breakOptionsDiv && vigenereRadio && vigenereRadio.checked) {
+          htmx.ajax('GET', '/vigenere-break-options?breakMethod=rockyou', {
+            target: '#break-options'
+          });
+        }
+      }
+    });
+  </script>
 </body>
 
 </html>

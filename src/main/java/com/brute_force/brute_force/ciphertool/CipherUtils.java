@@ -12,8 +12,8 @@ public class CipherUtils {
 
     static {
         try {
-            commonWordsByLanguage.put("English", readLines("/data/common_english.txt", 100));
-            commonWordsByLanguage.put("Spanish", readLines("/data/common_spanish.txt", 100));
+            commonWordsByLanguage.put("English", readLines("/data/common_english.txt", 300));
+            commonWordsByLanguage.put("Spanish", readLines("/data/common_spanish.txt", 300));
             rockyouPasswords.addAll(readLines("/data/rockyou.txt", 1000).stream().collect(Collectors.toList()));
         } catch (Exception e) {
             e.printStackTrace();

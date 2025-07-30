@@ -25,22 +25,23 @@
     <div th:unless="${useKnownKey}">
       <div th:if="${cipher == 'Vigenère'}">
         <p class="text-gray-700 font-medium mb-2">Choose breaking method:</p>
-        <input type="hidden" name="breakMethod" th:value="${breakMethod ?: 'rockyou'}">
         <div class="space-y-2">
           <label class="flex items-center space-x-2">
-            <input type="radio" name="breakMethod" value="rockyou" hx-get="/vigenere-break-options?breakMethod=rockyou"
-              hx-target="#break-options" hx-trigger="change" class="h-5 w-5 text-blue-500" checked>
+            <input type="radio" name="breakMethod" value="rockyou" hx-get="/vigenere-break-options"
+              hx-vals='{"breakMethod": "rockyou"}' hx-target="#break-options" hx-trigger="change"
+              class="h-5 w-5 text-blue-500" checked>
             <span class="text-gray-700">Use rockyou.txt</span>
           </label>
           <label class="flex items-center space-x-2">
-            <input type="radio" name="breakMethod" value="bruteForce"
-              hx-get="/vigenere-break-options?breakMethod=bruteForce" hx-target="#break-options" hx-trigger="change"
+            <input type="radio" name="breakMethod" value="bruteForce" hx-get="/vigenere-break-options"
+              hx-vals='{"breakMethod": "bruteForce"}' hx-target="#break-options" hx-trigger="change"
               class="h-5 w-5 text-blue-500">
             <span class="text-gray-700">Brute-force</span>
           </label>
         </div>
-        <div id="break-options" class="mt-2"
-          th:replace="~{fragments/vigenere-break-options :: vigenere-break-options(breakMethod='rockyou')}"></div>
+        <div id="break-options" class="mt-2">
+          <!-- Initial content will be loaded by HTMX -->
+        </div>
       </div>
     </div>
   </div>
