@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="container mx-auto p-6 max-w-2xl bg-white rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">Result</h1>
+    <div th:if="${result}" class="bg-gray-50 p-4 rounded-lg">
+      <p th:text="${result}" class="text-gray-700 whitespace-pre-wrap"></p>
+    </div>
+    <div th:if="${attempts}" class="bg-gray-50 p-4 rounded-lg">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Decryption Attempts</h2>
+      <ul class="space-y-3 max-h-96 overflow-y-auto">
+        <li th:each="attempt : ${attempts}" class="p-3 bg-white border rounded-lg shadow-sm">
+          <span th:text="${attempt.text}" class="text-gray-700 whitespace-pre-wrap"></span>
+          <span th:if="${attempt.key}" class="text-gray-500 ml-2">(Key: <span th:text="${attempt.key}"></span>)</span>
+          <span class="text-gray-500 ml-2">(Score: <span th:text="${attempt.score}"></span>)</span>
+        </li>
+      </ul>
+    </div>
+    <a href="/"
+      class="mt-6 inline-block bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-200">Back to
+      Form</a>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+<div th:fragment="form-options" class="space-y-4">
+  <div th:if="${operation == 'Encrypt'}">
+    <div th:switch="${cipher}">
+      <div th:case="'Caesar'">
+        <label class="block text-gray-700 font-medium mb-1">Key (0-25)</label>
+        <input type="number" name="key" min="0" max="25"
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter shift value">
+      </div>
+      <div th:case="'Vigenère'">
+        <label class="block text-gray-700 font-medium mb-1">Keyword</label>
+        <input type="text" name="vigenereKey"
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter keyword">
+      </div>
+    </div>
+  </div>
+  <div th:if="${operation == 'Decrypt'}">
+    <label class="flex items-center space-x-2">
+      <input type="checkbox" name="useKnownKey" hx-get="/key-options" hx-target="#key-options" hx-trigger="change"
+        hx-include="[name=cipher]" class="h-5 w-5 text-blue-500">
+      <span class="text-gray-700">Use Known Key</span>
+    </label>
+    <div id="key-options" class="mt-2"></div>
+  </div>
+</div>
