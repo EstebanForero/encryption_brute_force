@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-    <link href="css/style.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
 
-  </head>
-  <body>
-  
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link href="css/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-8">
+    <h1 class="text-2xl font-bold mb-4">Upload and Process Text File</h1>
+    <form enctype="multipart/form-data" hx-post="/upload" hx-target="#result" hx-swap="innerHTML">
+      <input type="file" name="file" accept=".txt" class="mb-4 p-2 border rounded w-full">
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Upload</button>
+    </form>
+    <div id="result" class="mt-4"></div>
+  </div>
+</body>
+
 </html>
