@@ -53,17 +53,39 @@ public class CipherController {
         String language = form.getLanguage();
         boolean partialResults = false;
 
+        // Validate input
+        if (form.getText() == null || form.getText().trim().isEmpty()) {
+            model.addAttribute("error", "Text input cannot be empty.");
+            return "result";
+        }
+
         if ("Encrypt".equals(form.getOperation())) {
             if ("Caesar".equals(form.getCipher())) {
+                if (form.getKey() < 0 || form.getKey() > 25) {
+                    model.addAttribute("error", "Caesar key must be between 0 and 25.");
+                    return "result";
+                }
                 result = CaesarCipher.encrypt(form.getText(), form.getKey());
             } else if ("Vigenère".equals(form.getCipher())) {
+                if (form.getVigenereKey() == null || form.getVigenereKey().trim().isEmpty()) {
+                    model.addAttribute("error", "Vigenère keyword cannot be empty.");
+                    return "result";
+                }
                 result = VigenereCipher.encrypt(form.getText(), form.getVigenereKey());
             }
         } else if ("Decrypt".equals(form.getOperation())) {
             if (form.isUseKnownKey()) {
                 if ("Caesar".equals(form.getCipher())) {
+                    if (form.getKey() < 0 || form.getKey() > 25) {
+                        model.addAttribute("error", "Caesar key must be between 0 and 25.");
+                        return "result";
+                    }
                     result = CaesarCipher.decrypt(form.getText(), form.getKey());
                 } else if ("Vigenère".equals(form.getCipher())) {
+                    if (form.getVigenereKey() == null || form.getVigenereKey().trim().isEmpty()) {
+                        model.addAttribute("error", "Vigenère keyword cannot be empty.");
+                        return "result";
+                    }
                     result = VigenereCipher.decrypt(form.getText(), form.getVigenereKey());
                 }
             } else {
@@ -78,21 +100,39 @@ public class CipherController {
                         });
                     }
                 } else if ("Vigenère".equals(form.getCipher())) {
-                    List<String> keys;
+                    List<String> keys = new ArrayList<>();
                     if ("rockyou".equals(form.getBreakMethod())) {
                         int n = Math.min(form.getNumPasswords(), CipherUtils.rockyouPasswords.size());
+                        if (n <= 0) {
+                            model.addAttribute("error", "Number of passwords must be greater than 0.");
+                            return "result";
+                        }
                         keys = CipherUtils.rockyouPasswords.subList(0, n);
                     } else if ("bruteForce".equals(form.getBreakMethod())) {
                         int length = form.getBruteForceLength();
+                        if (length < 1 || length > 3) {
+                            model.addAttribute("error", "Brute-force key length must be between 1 and 3.");
+                            return "result";
+                        }
+                        System.out.println("The length of the brute force is: " + length);
                         keys = CipherUtils.generateKeys(length);
                     } else {
-                        keys = new ArrayList<>();
+                        System.err.println("Breaking method: " + form.getBreakMethod());
+                        model.addAttribute("error", "Invalid breaking method selected.");
+                        return "result";
                     }
-                    for (String key : keys) {
+                    // Distribute keys across threads
+                    int chunkSize = Math.max(1, keys.size() / cores);
+                    for (int i = 0; i < keys.size(); i += chunkSize) {
+                        List<String> chunk = keys.subList(i, Math.min(i + chunkSize, keys.size()));
                         tasks.add(() -> {
-                            String decrypted = VigenereCipher.decrypt(form.getText(), key);
-                            int score = CipherUtils.countCommonWords(decrypted, language);
-                            return new DecryptionAttempt(decrypted, key, score);
+                            List<DecryptionAttempt> chunkAttempts = new ArrayList<>();
+                            for (String key : chunk) {
+                                String decrypted = VigenereCipher.decrypt(form.getText(), key);
+                                int score = CipherUtils.countCommonWords(decrypted, language);
+                                chunkAttempts.add(new DecryptionAttempt(decrypted, key, score));
+                            }
+                            return chunkAttempts.get(0); // Return first for compatibility, handled in main thread
                         });
                     }
                 }

@@ -10,9 +10,8 @@ public class CipherForm {
     private boolean useKnownKey;
     private String breakMethod;
     private int numPasswords;
-    private int bruteForceLength;
+    private int bruteForceLength = 1; // The efault is 1
 
-    // Getters and Setters
     public String getCipher() {
         return cipher;
     }
