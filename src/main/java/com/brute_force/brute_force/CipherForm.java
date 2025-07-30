@@ -8,9 +8,11 @@ public class CipherForm {
     private int key;
     private String vigenereKey;
     private boolean useKnownKey;
-    private boolean useDictionary;
-    private int keyLength;
+    private String breakMethod;
+    private int numPasswords;
+    private int bruteForceLength;
 
+    // Getters and Setters
     public String getCipher() {
         return cipher;
     }
@@ -67,19 +69,27 @@ public class CipherForm {
         this.useKnownKey = useKnownKey;
     }
 
-    public boolean isUseDictionary() {
-        return useDictionary;
+    public String getBreakMethod() {
+        return breakMethod;
     }
 
-    public void setUseDictionary(boolean useDictionary) {
-        this.useDictionary = useDictionary;
+    public void setBreakMethod(String breakMethod) {
+        this.breakMethod = breakMethod;
     }
 
-    public int getKeyLength() {
-        return keyLength;
+    public int getNumPasswords() {
+        return numPasswords;
     }
 
-    public void setKeyLength(int keyLength) {
-        this.keyLength = keyLength;
+    public void setNumPasswords(int numPasswords) {
+        this.numPasswords = numPasswords;
+    }
+
+    public int getBruteForceLength() {
+        return bruteForceLength;
+    }
+
+    public void setBruteForceLength(int bruteForceLength) {
+        this.bruteForceLength = bruteForceLength;
     }
 }

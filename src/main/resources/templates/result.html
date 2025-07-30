@@ -15,6 +15,7 @@
     </div>
     <div th:if="${attempts}" class="bg-gray-50 p-4 rounded-lg">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Decryption Attempts</h2>
+      <p th:if="${partialResults}" class="text-yellow-600 mb-4">Operation timed out. Showing partial results.</p>
       <ul class="space-y-3 max-h-96 overflow-y-auto">
         <li th:each="attempt : ${attempts}" class="p-3 bg-white border rounded-lg shadow-sm">
           <span th:text="${attempt.text}" class="text-gray-700 whitespace-pre-wrap"></span>
@@ -23,9 +24,7 @@
         </li>
       </ul>
     </div>
-    <a href="/"
-      class="mt-6 inline-block bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-200">Back to
-      Form</a>
+    <a href="/" class="mt-6 inline-block bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Back to Form</a>
   </div>
 </body>
 

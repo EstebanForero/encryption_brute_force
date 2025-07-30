@@ -1,6 +1,7 @@
 package com.brute_force.brute_force.ciphertool;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,18 +12,18 @@ public class CipherUtils {
 
     static {
         try {
-            commonWordsByLanguage.put("English", readLines("/data/common_english.txt"));
-            commonWordsByLanguage.put("Spanish", readLines("/data/common_spanish.txt"));
+            commonWordsByLanguage.put("English", readLines("/data/common_english.txt", 100));
+            commonWordsByLanguage.put("Spanish", readLines("/data/common_spanish.txt", 100));
             rockyouPasswords.addAll(readLines("/data/rockyou.txt").stream().limit(1000).collect(Collectors.toList()));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static List<String> readLines(String resourcePath) throws Exception {
+    private static List<String> readLines(String resourcePath, int limit) throws Exception {
         try (InputStream is = CipherUtils.class.getResourceAsStream(resourcePath);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-            return reader.lines().map(String::toUpperCase).collect(Collectors.toList());
+            return reader.lines().limit(limit).map(String::toUpperCase).collect(Collectors.toList());
         }
     }
 

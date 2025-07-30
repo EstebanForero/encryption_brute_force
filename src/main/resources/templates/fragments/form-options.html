@@ -3,15 +3,12 @@
     <div th:switch="${cipher}">
       <div th:case="'Caesar'">
         <label class="block text-gray-700 font-medium mb-1">Key (0-25)</label>
-        <input type="number" name="key" min="0" max="25"
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <input type="number" name="key" min="0" max="25" class="w-full p-3 border rounded-lg"
           placeholder="Enter shift value">
       </div>
       <div th:case="'Vigenère'">
         <label class="block text-gray-700 font-medium mb-1">Keyword</label>
-        <input type="text" name="vigenereKey"
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter keyword">
+        <input type="text" name="vigenereKey" class="w-full p-3 border rounded-lg" placeholder="Enter keyword">
       </div>
     </div>
   </div>
@@ -22,5 +19,22 @@
       <span class="text-gray-700">Use Known Key</span>
     </label>
     <div id="key-options" class="mt-2"></div>
+    <div th:unless="${useKnownKey}">
+      <div th:if="${cipher == 'Vigenère'}">
+        <p class="text-gray-700 font-medium mb-2">Choose breaking method:</p>
+        <label class="flex items-center space-x-2">
+          <input type="radio" name="breakMethod" value="rockyou" hx-get="/vigenere-break-options"
+            hx-target="#break-options" hx-trigger="change" class="h-5 w-5 text-blue-500" checked>
+          <span class="text-gray-700">Use rockyou.txt</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="radio" name="breakMethod" value="bruteForce" hx-get="/vigenere-break-options"
+            hx-target="#break-options" hx-trigger="change" class="h-5 w-5 text-blue-500">
+          <span class="text-gray-700">Brute-force</span>
+        </label>
+        <div id="break-options" class="mt-2"
+          th:replace="'fragments/vigenere-break-options' :: vigenere-break-options(breakMethod='rockyou')"></div>
+      </div>
+    </div>
   </div>
 </div>

@@ -14,38 +14,34 @@
     <form th:action="@{/process}" method="post" class="space-y-6">
       <div>
         <label class="block text-gray-700 font-medium mb-1">Cipher</label>
-        <select name="cipher" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          hx-get="/update-form" hx-target="#form-content" hx-trigger="change">
+        <select name="cipher" class="w-full p-3 border rounded-lg" hx-get="/update-form" hx-target="#form-content"
+          hx-trigger="change" hx-include="[name=operation]">
           <option value="Caesar">Caesar</option>
           <option value="Vigenère">Vigenère</option>
         </select>
       </div>
       <div>
         <label class="block text-gray-700 font-medium mb-1">Operation</label>
-        <select name="operation"
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" hx-get="/update-form"
-          hx-target="#form-content" hx-trigger="change">
+        <select name="operation" class="w-full p-3 border rounded-lg" hx-get="/update-form" hx-target="#form-content"
+          hx-trigger="change" hx-include="[name=cipher]">
           <option value="Encrypt">Encrypt</option>
           <option value="Decrypt">Decrypt</option>
         </select>
       </div>
       <div>
         <label class="block text-gray-700 font-medium mb-1">Language</label>
-        <select name="language"
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select name="language" class="w-full p-3 border rounded-lg">
           <option value="English">English</option>
           <option value="Spanish">Spanish</option>
         </select>
       </div>
       <div>
         <label class="block text-gray-700 font-medium mb-1">Text</label>
-        <textarea name="text" rows="5"
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <textarea name="text" rows="5" class="w-full p-3 border rounded-lg"
           placeholder="Enter your text here..."></textarea>
       </div>
       <div id="form-content" class="space-y-4"></div>
-      <button type="submit"
-        class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-200">Process</button>
+      <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600">Process</button>
     </form>
   </div>
 </body>
