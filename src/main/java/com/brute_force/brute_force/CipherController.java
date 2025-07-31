@@ -9,6 +9,7 @@ import com.brute_force.brute_force.ciphertool.*;
 import jakarta.annotation.PreDestroy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -53,7 +54,6 @@ public class CipherController {
         String language = form.getLanguage();
         boolean partialResults = false;
 
-        // Validate input
         if (form.getText() == null || form.getText().trim().isEmpty()) {
             model.addAttribute("error", "Text input cannot be empty.");
             return "result";
@@ -89,14 +89,14 @@ public class CipherController {
                     result = VigenereCipher.decrypt(form.getText(), form.getVigenereKey());
                 }
             } else {
-                List<Callable<DecryptionAttempt>> tasks = new ArrayList<>();
+                List<Callable<List<DecryptionAttempt>>> tasks = new ArrayList<>();
                 if ("Caesar".equals(form.getCipher())) {
                     for (int shift = 0; shift < 26; shift++) {
                         int finalShift = shift;
                         tasks.add(() -> {
                             String decrypted = CaesarCipher.decrypt(form.getText(), finalShift);
                             int score = CipherUtils.countCommonWords(decrypted, language);
-                            return new DecryptionAttempt(decrypted, String.valueOf(finalShift), score);
+                            return Arrays.asList(new DecryptionAttempt(decrypted, String.valueOf(finalShift), score));
                         });
                     }
                 } else if ("Vigenère".equals(form.getCipher())) {
@@ -110,18 +110,19 @@ public class CipherController {
                         keys = CipherUtils.rockyouPasswords.subList(0, n);
                     } else if ("bruteForce".equals(form.getBreakMethod())) {
                         int length = form.getBruteForceLength();
-                        if (length < 1 || length > 3) {
-                            model.addAttribute("error", "Brute-force key length must be between 1 and 3.");
+                        if (length < 1 || length > 5) {
+                            model.addAttribute("error", "Brute-force key length must be between 1 and 5.");
                             return "result";
                         }
-                        System.out.println("The length of the brute force is: " + length);
                         keys = CipherUtils.generateKeys(length);
                     } else {
                         System.err.println("Breaking method: " + form.getBreakMethod());
                         model.addAttribute("error", "Invalid breaking method selected.");
                         return "result";
                     }
-                    // Distribute keys across threads
+
+                    final int TOP_N_PER_CHUNK = 100;
+
                     int chunkSize = Math.max(1, keys.size() / cores);
                     for (int i = 0; i < keys.size(); i += chunkSize) {
                         List<String> chunk = keys.subList(i, Math.min(i + chunkSize, keys.size()));
@@ -132,16 +133,17 @@ public class CipherController {
                                 int score = CipherUtils.countCommonWords(decrypted, language);
                                 chunkAttempts.add(new DecryptionAttempt(decrypted, key, score));
                             }
-                            return chunkAttempts.get(0); // Return first for compatibility, handled in main thread
+                            chunkAttempts.sort((a, b) -> b.getScore() - a.getScore());
+                            return chunkAttempts.stream().limit(TOP_N_PER_CHUNK).collect(Collectors.toList());
                         });
                     }
                 }
                 try {
-                    List<Future<DecryptionAttempt>> futures = executor.invokeAll(tasks, 30, TimeUnit.SECONDS);
-                    for (Future<DecryptionAttempt> future : futures) {
+                    List<Future<List<DecryptionAttempt>>> futures = executor.invokeAll(tasks, 30, TimeUnit.SECONDS);
+                    for (Future<List<DecryptionAttempt>> future : futures) {
                         try {
-                            DecryptionAttempt attempt = future.get(0, TimeUnit.SECONDS);
-                            attempts.add(attempt);
+                            List<DecryptionAttempt> attempt = future.get(0, TimeUnit.SECONDS);
+                            attempts.addAll(attempt);
                         } catch (CancellationException | ExecutionException | TimeoutException e) {
                             partialResults = true;
                         }
@@ -150,7 +152,7 @@ public class CipherController {
                     partialResults = true;
                 }
                 attempts.sort((a, b) -> b.getScore() - a.getScore());
-                attempts = attempts.stream().limit(100).collect(Collectors.toList());
+                attempts = attempts.stream().limit(120).collect(Collectors.toList());
             }
         }
 

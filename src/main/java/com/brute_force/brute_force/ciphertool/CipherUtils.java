@@ -7,13 +7,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CipherUtils {
-    public static final Map<String, List<String>> commonWordsByLanguage = new HashMap<>();
+    public static final Map<String, Set<String>> commonWordsByLanguage = new HashMap<>();
     public static final List<String> rockyouPasswords = new ArrayList<>();
 
     static {
         try {
-            commonWordsByLanguage.put("English", readLines("/data/common_english.txt", 300));
-            commonWordsByLanguage.put("Spanish", readLines("/data/common_spanish.txt", 300));
+            List<String> common_english = readLines("/data/common_english.txt", 300);
+            List<String> common_spanish = readLines("/data/common_spanish.txt", 300);
+
+            Set<String> common_english_set = new HashSet<String>(common_english);
+            Set<String> common_spanish_set = new HashSet<String>(common_spanish);
+
+            commonWordsByLanguage.put("English", common_english_set);
+            commonWordsByLanguage.put("Spanish", common_spanish_set);
             rockyouPasswords.addAll(readLines("/data/rockyou.txt", 1000).stream().collect(Collectors.toList()));
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,7 +34,7 @@ public class CipherUtils {
     }
 
     public static int countCommonWords(String text, String language) {
-        List<String> commonWords = commonWordsByLanguage.getOrDefault(language, Collections.emptyList());
+        Set<String> commonWords = commonWordsByLanguage.getOrDefault(language, Collections.emptySet());
         String[] words = text.toUpperCase().split("\\s+");
         int count = 0;
         for (String word : words) {
