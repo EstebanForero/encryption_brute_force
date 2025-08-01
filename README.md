@@ -280,7 +280,7 @@ cd cipher-tool
 mvn spring-boot:run
 ```
 
-Despues ve a `http://localhost:8080` y empieza a cifrar.
+Despues en  `http://localhost:8080` se puede empezar a utilizar la aplicacion.
 
 ## Ejemplos de Uso
 
